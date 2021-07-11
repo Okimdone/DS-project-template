@@ -12,7 +12,4 @@
     └── train	<- train model stage code
 ├── build.sh	
 └── run.sh
-
-
-9 directories, 3 files
 ```
