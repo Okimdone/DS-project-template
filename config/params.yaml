@@ -1,0 +1,49 @@
+base:
+  project_dir: . # '.' means current dir. Better to move to .env in future
+  random_state: 42
+  log_level: DEBUG
+  exp_name: Experiment 1
+
+data_load:
+  col_index: 'Id'
+  unprocessed_dataset: data/unprocessed/dataset.csv
+  #unprocessed_target: data/unprocessed/target.csv
+  processed_dataset: data/processed/dataset.csv
+  processed_target: data/processed/target.csv
+  error_dataset: data/error/dataset.csv
+  #error_target: data/error/target.csv
+
+data_split:
+  random_state: 42
+  shuffle: True
+  train_size: 0.8 # size of the training set
+  split_test_n_valid_sets: True  # If true split the dataset into 3 sets (train, test, validation)
+  valid_size: 0.1 # size of the validation set
+  paths:
+    train_index_path: data/processed/train_index.csv
+    valid_index_path: data/processed/valid_index.csv
+    test_index_path:  data/processed/test_index.csv
+
+# featurize:
+#   max_features: 200
+
+train:
+  estimator: catboost
+  catboost_params:
+    iterations: 30
+    thread_count: 50
+    has_time: true
+    depth: 6
+    learning_rate: 0.15
+    allow_writing_files: false
+  top_K_coef: 0.05
+  model_path: models/model.pickle
+  train_metrics: reports/train_metrics.json
+  train_metrics_path: reports/train_metrics.json
+  train_metrics_png: reports/train_metrics.png
+  train_plots_path: reports/train_plots.csv
+  raw_metrics_path: reports/raw_metrics.csv
+  encoder_path: models/encoder.pickle
+
+log_metrics:
+    mlflow_report_path: reports/mlflow_report.md

@@ -1,0 +1,92 @@
+stages:
+  load_data_stage:
+    cmd: python -m src.pipelines.load_data --config=config/params.yaml
+    deps:
+    - src/data/load.py
+    - src/data/process.py
+    - src/utils/logging.py
+    params:
+    - config/params.yaml:
+      - base
+      - data_load
+    outs:
+    - data/processed/dataset.csv
+    - data/processed/target.csv
+
+  data_split_stage:
+    cmd: python -m src.pipelines.split_data --config=config/params.yaml
+    deps: 
+    - data/processed/dataset.csv
+    - data/processed/target.csv
+    - src/data/split.py
+    - src/utils/logging.py
+    params:
+    - config/params.yaml:
+      - base
+      - data_load
+      - data_split
+    outs:
+    - data/processed/train_index.csv
+    - data/processed/valid_index.csv
+    # - data/processed/test_index.csv
+
+  # featurize_stage:
+  #   cmd: python -m src.pipelines.featurization --config=config/params.yaml
+  #   deps:
+  #   - src/data/load.py
+  #   - data/processed/dataset.csv
+  #   - data/processed/target.csv
+  #   - data/processed/train_index.csv
+  #   - data/processed/valid_index.csv
+  #   # - data/processed/test_index.csv
+  #   params:
+  #   - config/params.yaml:
+  #     - base
+  #     - data_load
+  #     - featurize
+  #   outs:
+  #   - data/processed/features_set.csv
+    # - data/processed/encoder.pickle
+
+
+  train_stage:
+    cmd: python -m src.pipelines.train --config=config/params.yaml
+    deps:
+    - src/data/load.py
+    - src/data/process.py
+    - src/data/split.py
+    - src/utils/logging.py
+    - data/processed/dataset.csv
+    - data/processed/target.csv
+    - data/processed/train_index.csv
+    - data/processed/valid_index.csv
+    # - data/processed/features_set.csv
+    # - src/evaluate/metrics.py
+    params:
+    - config/params.yaml:
+      - base
+      - data_load
+      - train
+    outs:
+    - models/model.pickle
+  # metrics:
+  # - reports/raw_metrics.csv
+  # - reports/train_metrics.json
+  
+#  log_metrics:
+#    cmd: python -m src.pipelines.log_metrics --config=config/params.yaml
+#    deps:
+#    - data/processed/features.feather
+#    - models/model.joblib
+#    - reports/raw_metrics.csv
+#    - reports/train_metrics.json
+#    params:
+#    - config/params.yaml:
+#      - log_metrics
+#      - train
+#    outs:
+#    - reports/mlflow_report.md:
+#        cache: false
+
+
+    # - data/processed/test_index.csv
